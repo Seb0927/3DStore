@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
     <div className="h-screen w-screen bg-blue-50 content-center p-16">
