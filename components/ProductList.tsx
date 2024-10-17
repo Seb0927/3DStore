@@ -28,11 +28,12 @@ const initialProducts: Product[] = [
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>(initialProducts)
+  const [currentProduct, setCurrentProduct] = useState<Product | null>(null)
+  const [newProduct, setNewProduct] = useState<{ name: string, description: string, price: string, image: File | null }>({ name: '', description: '', price: '', image: null })
+
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [currentProduct, setCurrentProduct] = useState<Product | null>(null)
-  const [newProduct, setNewProduct] = useState<{ name: string, description: string, price: string, image: File | null }>({ name: '', description: '', price: '', image: null })
 
   const handleImageUpload = async (file: File) => {
     const storageRef = ref(storage, `products/${file.name}`)
@@ -51,7 +52,6 @@ export default function ProductList() {
     }
   }
 
-
   const handleEdit = (product: Product) => {
     setCurrentProduct(product)
     setIsEditDialogOpen(true)
@@ -68,11 +68,7 @@ export default function ProductList() {
   }
 
   const handleConfirmDelete = () => {
-    if (currentProduct) {
-      setProducts(products.filter(p => p.id !== currentProduct.id))
-      setIsDeleteDialogOpen(false)
-      setCurrentProduct(null)
-    }
+    // Implementar la eliminación de un producto
   }
 
   return (
@@ -126,11 +122,11 @@ export default function ProductList() {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">Nombre</Label>
-              <Input id="name" value={currentProduct?.name} className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, name: e.target.value})} />
+              <Input id="name" className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, name: e.target.value})} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">Descripción</Label>
-              <Input id="description" value={currentProduct?.description} className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, description: e.target.value})} />
+              <Input id="description" className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, description: e.target.value})} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="image" className="text-right">Imagen</Label>
@@ -138,7 +134,7 @@ export default function ProductList() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="price" className="text-right">Precio</Label>
-              <Input id="price" value={currentProduct?.price} className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, price: e.target.value})} />
+              <Input id="price" className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, price: e.target.value})} />
             </div>
           </div>
           <DialogFooter>
