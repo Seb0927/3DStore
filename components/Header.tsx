@@ -16,7 +16,6 @@ export default function Header() {
   const { user, setUser } = useUser();
   const [ isLogged, setLogged ] = useState(false);
   
-  
   const handleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     if (!isLogged) {
@@ -30,9 +29,18 @@ export default function Header() {
           photoURL: userInfo.photoURL
         }
 
+        createUser(loggedUser);
+        const isAdmin = await getUser(loggedUser.uid);
+        const userContext = {
+          uid: loggedUser.uid,
+          email: loggedUser.email,
+          displayName: loggedUser.displayName,
+          photoURL: loggedUser.photoURL,
+          isAdmin: isAdmin
+        }
+        
         setLogged(true);
-        setUser(loggedUser);
-        console.log(userInfo);  
+        setUser(userContext);
       } catch (error) {
         console.log(error);
       }
@@ -56,7 +64,7 @@ export default function Header() {
       <nav className="flex items-center space-x-6">
         <Link href="/productos" className="text-gray-600 hover:text-gray-900">Productos</Link>
         <Link href="/contacto" className="text-gray-600 hover:text-gray-900">Contacto</Link>
-        {user && user.email === "sebs0927@gmail.com" ? (
+        {user?.isAdmin ? (
           <Link href="/administrar" className="text-gray-600 hover:text-gray-900">Administrar</Link>
         ) : null}
         <button className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600" onClick={handleSignIn} >{!isLogged ? ("Inicar sesión") : ("Cerrar sesión")}</button>
