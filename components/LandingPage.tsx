@@ -1,18 +1,18 @@
 import Image from 'next/image'
 
 const products = [
-  { id: 1, name: 'Mug', description: 'Ceramic mug with custom 3D printed pattern', price: '$50.000', image: '/placeholder.svg?height=200&width=200' },
-  { id: 2, name: 'Phone case', description: 'Phone case with custom 3D printed design', price: '$30.000', image: '/placeholder.svg?height=200&width=200' },
-  { id: 3, name: 'Lamp', description: 'Table lamp with custom 3D printed base', price: '$30.000', image: '/placeholder.svg?height=200&width=200' },
-  { id: 4, name: 'Miniature', description: 'Detailed miniature scene with 3D printed elements', price: '$70.000', image: '/placeholder.svg?height=200&width=200' },
-  { id: 5, name: 'Statue', description: 'Statue with custom 3D printed design', price: '$30.000', image: '/placeholder.svg?height=200&width=200' },
-  { id: 6, name: 'Planter', description: 'Planter with custom 3D printed pattern', price: '$30.000', image: '/placeholder.svg?height=200&width=200' },
+  { id: 1, name: 'Taza', description: 'Taza de cerámica con patrón personalizado impreso en 3D', price: '$50.000', image: '/images/cup.png' },
+  { id: 2, name: 'Funda de teléfono', description: 'Funda de teléfono con diseño personalizado impreso en 3D', price: '$30.000', image: '/images/phonecase.png' },
+  { id: 3, name: 'Lámpara', description: 'Lámpara de mesa con base personalizada impresa en 3D', price: '$30.000', image: '/images/lamp.png' },
+  { id: 4, name: 'Miniatura', description: 'Escena en miniatura detallada con elementos impresos en 3D', price: '$70.000', image: '/images/mini.png' },
+  { id: 5, name: 'Estatua', description: 'Estatua con diseño personalizado impreso en 3D', price: '$30.000', image: '/images/statue.png' },
+  { id: 6, name: 'Maceta', description: 'Maceta con patrón personalizado impreso en 3D', price: '$30.000', image: '/images/pot.png' },
 ]
 
 export default function LandingPage() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold text-center mb-8">!Hola mundo 3D!</h1>
+      <h1 className="text-4xl font-bold text-center mb-8">¡Hola mundo 3D!</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {products.map((product) => (
           <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden">

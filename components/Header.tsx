@@ -57,7 +57,7 @@ export default function Header() {
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-white shadow-sm">
       <div className="flex items-center">
-        <Image src="/placeholder.jpg" alt="Fabricks3D Logo" width={40} height={40} className="mr-2" />
+        <Image src="/images/placeholder.jpg" alt="Fabricks3D Logo" width={40} height={40} className="mr-2" />
         <span className="text-xl font-bold">Fabricks3D</span>
       </div>
       <nav className="flex items-center space-x-6">
