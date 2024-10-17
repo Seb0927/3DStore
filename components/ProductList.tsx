@@ -17,16 +17,8 @@ interface Product {
   price: string
 }
 
-const initialProducts: Product[] = [
-  { id: '1', name: 'Model 1', description: 'This is a 3D model', image: '/placeholder.svg', price: '$100' },
-  { id: '2', name: 'Model 2', description: 'This is a 3D model', image: '/placeholder.svg', price: '$200' },
-  { id: '3', name: 'Model 3', description: 'This is a 3D model', image: '/placeholder.svg', price: '$300' },
-  { id: '4', name: 'Model 4', description: 'This is a 3D model', image: '/placeholder.svg', price: '$400' },
-  { id: '5', name: 'Model 5', description: 'This is a 3D model', image: '/placeholder.svg', price: '$500' },
-]
-
 export default function ProductList() {
-  const [products, setProducts] = useState<Product[]>(initialProducts)
+  const [products, setProducts] = useState<Product[]>([])
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null)
   const [newProduct, setNewProduct] = useState<{ name: string, description: string, price: string, image: File | null }>({ name: '', description: '', price: '', image: null })
 
