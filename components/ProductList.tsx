@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { storage, firestore } from '@/firebase/firebase'
-import { uploadImage, createProduct, getProducts, getProduct, updateProduct, deleteImage } from "../models/product/product"
+import { uploadImage, createProduct, getProducts, getProduct, updateProduct, deleteImage, deleteProduct } from "../models/product/product"
 
 interface Product {
   id: string
@@ -80,16 +80,21 @@ export default function ProductList() {
     setIsAddDialogOpen(true)
   }
 
-  const handleDelete = (product: Product) => {
+  const handleDelete = async (product: Product) => {
     setCurrentProduct({
       ...product,
       image: null // Set image to null or handle conversion if needed
     })
     setIsDeleteDialogOpen(true)
+
   }
 
-  const handleConfirmDelete = () => {
-    // Implementar la eliminación de un producto
+  const handleComfimnDelete = async () => {
+    const id = currentProduct?.id
+    deleteProduct(id)
+    const products = await getProducts();
+    setProducts(products || []);
+    setIsDeleteDialogOpen(false)
   }
 
   useEffect(() => {
@@ -227,7 +232,7 @@ export default function ProductList() {
           <p>¿Está seguro de que desea eliminar {currentProduct?.name}?</p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Salir</Button>
-            <Button variant="destructive" onClick={handleConfirmDelete}>Borrar</Button>
+            <Button variant="destructive" onClick={handleComfimnDelete}>Borrar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

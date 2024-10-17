@@ -1,5 +1,5 @@
 import { firestore, storage } from '../../firebase/firebase';
-import { doc, setDoc, getDoc, addDoc, collection, getDocs, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, addDoc, collection, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 export const createProduct = async (product) => {
@@ -70,5 +70,14 @@ export const updateProduct = async (id, product) => {
         await setDoc(productRef, product, {merge:true});
     } catch (error) {
         console.error("Error updating document: ", error);
+    }
+}
+
+export const deleteProduct = async (id) => {
+    try {
+        const productRef = doc(firestore, `products/${id}`);
+        await deleteDoc(productRef);
+    } catch (error) {
+        console.error("Error deleting document: ", error);
     }
 }
