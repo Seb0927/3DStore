@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { storage, firestore } from '@/firebase/firebase'
-import { uploadImage, createProduct, getProducts } from "../models/product/product"
+import { uploadImage, createProduct, getProducts, getProduct, updateProduct, deleteImage } from "../models/product/product"
 
 interface Product {
   id: string
@@ -19,7 +19,7 @@ interface Product {
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([])
-  const [currentProduct, setCurrentProduct] = useState<Product | null>(null)
+  const [currentProduct, setCurrentProduct] = useState<{ id: string, name: string, description: string, price: string, image: File | null }>({ id: '', name: '', description: '', price: '', image: null })
   const [newProduct, setNewProduct] = useState<{ name: string, description: string, price: string, image: File | null }>({ name: '', description: '', price: '', image: null })
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -41,18 +41,50 @@ export default function ProductList() {
     }
   }
 
+  const handleUpdate = async () => {
+    let data;
+    if (currentProduct.image) {
+      await deleteImage(currentProduct.image)
+      const imageUrl = await handleImageUpload(currentProduct.image)
+      data = {
+        name: currentProduct.name,
+        description: currentProduct.description,
+        price: currentProduct.price,
+        image: imageUrl
+      }
+    } else {
+      data = {
+        name: currentProduct.name,
+        description: currentProduct.description,
+        price: currentProduct.price,
+      }
+    }
+
+    await updateProduct(currentProduct.id, data)
+
+    const products = await getProducts();
+    setProducts(products || []);
+    setIsEditDialogOpen(false);
+  }
+
   const handleEdit = (product: Product) => {
-    setCurrentProduct(product)
+    setCurrentProduct({
+      ...product,
+      image: null // Set image to null or handle conversion if needed
+    })
     setIsEditDialogOpen(true)
   }
 
   const handleAdd = () => {
-    setCurrentProduct({ id: '1', name: '', description: '', image: '/placeholder.svg', price: '' })
+    setCurrentProduct({ id: '1', name: '', description: '', image: null, price: '' })
     setIsAddDialogOpen(true)
   }
 
   const handleDelete = (product: Product) => {
-    setCurrentProduct(product)
+    setCurrentProduct({
+      ...product,
+      image: null // Set image to null or handle conversion if needed
+    })
     setIsDeleteDialogOpen(true)
   }
 
@@ -67,6 +99,16 @@ export default function ProductList() {
     }
     fetchProducts()
   }, []);
+
+  useEffect(() => {
+    if (currentProduct) {
+      const fetchProduct = async () => {
+        const product = await getProduct(currentProduct.id)
+
+      }
+      fetchProduct()
+    }
+  }, [currentProduct])
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -114,28 +156,32 @@ export default function ProductList() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Editando {currentProduct?.name}</DialogTitle>
+            <DialogTitle>Editando {currentProduct?.name} </DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">Nombre</Label>
-              <Input id="name" className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, name: e.target.value })} />
+              <Input id="edit_name" className="col-span-3" value={currentProduct?.name} onChange={(e) => setCurrentProduct({ ...currentProduct!, name: e.target.value })} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">Descripción</Label>
-              <Input id="description" className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, description: e.target.value })} />
+              <Input id="edit_description" className="col-span-3" value={currentProduct?.description} onChange={(e) => setCurrentProduct({ ...currentProduct!, description: e.target.value })} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="image" className="text-right">Imagen</Label>
-              <Button id="image" className="col-span-3">Subir imagen</Button>
+              <Input type="file" onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setCurrentProduct({ ...currentProduct, image: e.target.files[0] });
+                }
+              }} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="price" className="text-right">Precio</Label>
-              <Input id="price" className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, price: e.target.value })} />
+              <Input id="edit_price" className="col-span-3" value={currentProduct?.price} onChange={(e) => setCurrentProduct({ ...currentProduct!, price: e.target.value })} />
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" onClick={() => currentProduct && handleSave()}>Guardar cambios</Button>
+            <Button type="submit" onClick={() => currentProduct && handleUpdate()}>Guardar cambios</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
