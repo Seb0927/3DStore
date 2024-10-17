@@ -1,5 +1,5 @@
 import { firestore, storage } from '../../firebase/firebase';
-import { doc, setDoc, getDoc, addDoc, collection } from 'firebase/firestore';
+import { doc, setDoc, getDoc, addDoc, collection, getDocs } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 export const createProduct = async (product) => {
@@ -25,5 +25,18 @@ export const uploadImage = async (file) => {
         return downloadURL
     } catch (error) {
         console.error("Error uploading image: ", error);
+    }
+}
+
+export const getProducts = async () => {
+    try {
+        const products = [];
+        const querySnapshot = await getDocs(collection(firestore, "products"));
+        querySnapshot.forEach((doc) => {
+            products.push(doc.data());
+        });
+        return products;
+    } catch (error) {
+        console.error("Error getting documents: ", error);
     }
 }

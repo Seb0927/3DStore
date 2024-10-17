@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { storage, firestore } from '@/firebase/firebase'
-import { uploadImage, createProduct } from "../models/product/product"
+import { uploadImage, createProduct, getProducts } from "../models/product/product"
 
 interface Product {
   id: string
@@ -67,6 +67,14 @@ export default function ProductList() {
   const handleConfirmDelete = () => {
     // Implementar la eliminación de un producto
   }
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const products = await getProducts()
+      setProducts(products || [])
+    }
+    fetchProducts()
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
