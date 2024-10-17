@@ -6,9 +6,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { storage, firestore } from '@/firebase/firebase'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { collection, addDoc } from 'firebase/firestore'
 
 interface Product {
-  id: number
+  id: string
   name: string
   description: string
   image: string
@@ -16,11 +19,11 @@ interface Product {
 }
 
 const initialProducts: Product[] = [
-  { id: 1, name: 'Model 1', description: 'This is a 3D model', image: '/placeholder.svg', price: '$100' },
-  { id: 2, name: 'Model 2', description: 'This is a 3D model', image: '/placeholder.svg', price: '$200' },
-  { id: 3, name: 'Model 3', description: 'This is a 3D model', image: '/placeholder.svg', price: '$300' },
-  { id: 4, name: 'Model 4', description: 'This is a 3D model', image: '/placeholder.svg', price: '$400' },
-  { id: 5, name: 'Model 5', description: 'This is a 3D model', image: '/placeholder.svg', price: '$500' },
+  { id: '1', name: 'Model 1', description: 'This is a 3D model', image: '/placeholder.svg', price: '$100' },
+  { id: '2', name: 'Model 2', description: 'This is a 3D model', image: '/placeholder.svg', price: '$200' },
+  { id: '3', name: 'Model 3', description: 'This is a 3D model', image: '/placeholder.svg', price: '$300' },
+  { id: '4', name: 'Model 4', description: 'This is a 3D model', image: '/placeholder.svg', price: '$400' },
+  { id: '5', name: 'Model 5', description: 'This is a 3D model', image: '/placeholder.svg', price: '$500' },
 ]
 
 export default function ProductList() {
@@ -29,7 +32,25 @@ export default function ProductList() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [newProduct, setNewProduct] = useState<{ name: string, description: string, price: string, image: File | null }>({ name: '', description: '', price: '', image: null })
+
+  const handleImageUpload = async (file: File) => {
+    const storageRef = ref(storage, `products/${file.name}`)
+    await uploadBytes(storageRef, file)
+    const downloadURL = await getDownloadURL(storageRef)
+    return downloadURL
+  }
+
+  const handleSave = async () => {
+    if (newProduct.image) {
+      const imageUrl = await handleImageUpload(newProduct.image)
+      const productData = { ...newProduct, image: imageUrl }
+      const docRef = await addDoc(collection(firestore, 'products'), productData)
+      setProducts([...products, { ...productData, id: docRef.id }])
+      setIsAddDialogOpen(false)
+    }
+  }
+
 
   const handleEdit = (product: Product) => {
     setCurrentProduct(product)
@@ -37,7 +58,7 @@ export default function ProductList() {
   }
 
   const handleAdd = () => {
-    setCurrentProduct({ id: Date.now(), name: '', description: '', image: '/placeholder.svg', price: '' })
+    setCurrentProduct({ id: '1', name: '', description: '', image: '/placeholder.svg', price: '' })
     setIsAddDialogOpen(true)
   }
 
@@ -46,33 +67,12 @@ export default function ProductList() {
     setIsDeleteDialogOpen(true)
   }
 
-  const handleSave = (product: Product) => {
-    if (isEditDialogOpen) {
-      setProducts(products.map(p => p.id === product.id ? product : p))
-      setIsEditDialogOpen(false)
-    } else if (isAddDialogOpen) {
-      setProducts([...products, product])
-      setIsAddDialogOpen(false)
-    }
-    setCurrentProduct(null)
-  }
-
   const handleConfirmDelete = () => {
     if (currentProduct) {
       setProducts(products.filter(p => p.id !== currentProduct.id))
       setIsDeleteDialogOpen(false)
       setCurrentProduct(null)
     }
-  }
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0])
-    }
-  }
-
-  const handleUploadClick = () => {
-    document.getElementById('fileInput')?.click()
   }
 
   return (
@@ -126,11 +126,11 @@ export default function ProductList() {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">Nombre</Label>
-              <Input id="name" value={currentProduct?.name} className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, name: e.target.value })} />
+              <Input id="name" value={currentProduct?.name} className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, name: e.target.value})} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">Descripción</Label>
-              <Input id="description" value={currentProduct?.description} className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, description: e.target.value })} />
+              <Input id="description" value={currentProduct?.description} className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, description: e.target.value})} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="image" className="text-right">Imagen</Label>
@@ -138,11 +138,11 @@ export default function ProductList() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="price" className="text-right">Precio</Label>
-              <Input id="price" value={currentProduct?.price} className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, price: e.target.value })} />
+              <Input id="price" value={currentProduct?.price} className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, price: e.target.value})} />
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" onClick={() => currentProduct && handleSave(currentProduct)}>Guardar cambios</Button>
+            <Button type="submit" onClick={() => currentProduct && handleSave()}>Guardar cambios</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -155,33 +155,27 @@ export default function ProductList() {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">Nombre</Label>
-              <Input id="name" value={currentProduct?.name} className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, name: e.target.value })} />
+              <Input id="name" className="col-span-3" onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">Descripción</Label>
-              <Input id="description" value={currentProduct?.description} className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, description: e.target.value })} />
+              <Input type="text" id="description" className="col-span-3" onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="image" className="text-right">Imagen</Label>
-              <div>
-              <Button id="image" onClick={handleUploadClick} className="col-span-3">Subir imagen</Button>
-                <input
-                  id="fileInput"
-                  type="file"
-                  style={{ display: 'none' }}
-                  onChange={handleFileChange}
-                />
-                {selectedFile && <p>Selected file: {selectedFile.name}</p>}
-                {/* Rest of your component code */}
-              </div>
+              <Input type="file" onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setNewProduct({ ...newProduct, image: e.target.files[0] });
+                }
+              }} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="price" className="text-right">Precio</Label>
-              <Input id="price" value={currentProduct?.price} className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, price: e.target.value })} />
+              <Input id="price" className="col-span-3" onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })} />
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" onClick={() => currentProduct && handleSave(currentProduct)}>Añadir Producto</Button>
+            <Button type="submit" onClick={handleSave}>Añadir Producto</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
