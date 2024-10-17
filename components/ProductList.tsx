@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { storage, firestore } from '@/firebase/firebase'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { collection, addDoc } from 'firebase/firestore'
+import { uploadImage, createProduct } from "../models/product/product"
 
 interface Product {
   id: string
@@ -36,19 +35,17 @@ export default function ProductList() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   const handleImageUpload = async (file: File) => {
-    const storageRef = ref(storage, `products/${file.name}`)
-    await uploadBytes(storageRef, file)
-    const downloadURL = await getDownloadURL(storageRef)
-    return downloadURL
+    return uploadImage(file)
   }
 
   const handleSave = async () => {
     if (newProduct.image) {
       const imageUrl = await handleImageUpload(newProduct.image)
       const productData = { ...newProduct, image: imageUrl }
-      const docRef = await addDoc(collection(firestore, 'products'), productData)
-      setProducts([...products, { ...productData, id: docRef.id }])
-      setIsAddDialogOpen(false)
+      const docRef = await createProduct(productData);
+      if (docRef) {
+        setProducts([...products, { ...productData, id: docRef.id, image: productData.image || '' }])
+      } setIsAddDialogOpen(false)
     }
   }
 
@@ -122,11 +119,11 @@ export default function ProductList() {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">Nombre</Label>
-              <Input id="name" className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, name: e.target.value})} />
+              <Input id="name" className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, name: e.target.value })} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">Descripción</Label>
-              <Input id="description" className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, description: e.target.value})} />
+              <Input id="description" className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, description: e.target.value })} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="image" className="text-right">Imagen</Label>
@@ -134,7 +131,7 @@ export default function ProductList() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="price" className="text-right">Precio</Label>
-              <Input id="price" className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, price: e.target.value})} />
+              <Input id="price" className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, price: e.target.value })} />
             </div>
           </div>
           <DialogFooter>
