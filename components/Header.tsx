@@ -7,6 +7,8 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { auth } from '@/firebase/firebase'
 import { useUser } from '@/context/UserContext'
 import { useState } from 'react'
+import { createUser, getUser } from '../models/user/users'
+import { create } from 'domain'
 
 
 export default function Header() {
@@ -18,15 +20,27 @@ export default function Header() {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(authorization, provider);
-      const userInfo = result.user;
+      const userLogged = result.user;
       const loggedUser = {
-        uid: userInfo.uid,
-        email: userInfo.email,
-        displayName: userInfo.displayName,
-        photoURL: userInfo.photoURL
+        uid: userLogged.uid,
+        email: userLogged.email,
+        displayName: userLogged.displayName,
+        photoURL: userLogged.photoURL,
       }
       setLogged("Cerrar Sesion");
-      setUser(loggedUser);
+      createUser(loggedUser);
+
+      const isAdmin = await getUser(loggedUser.uid);
+      const userContext = {
+        uid: loggedUser.uid,
+        email: loggedUser.email,
+        displayName: loggedUser.displayName,
+        photoURL: loggedUser.photoURL,
+        isAdmin: isAdmin
+      }
+
+      setUser(userContext);
+
     } catch (error) {
       console.log(error);
     }
@@ -41,7 +55,7 @@ export default function Header() {
       <nav className="flex items-center space-x-6">
         <Link href="/productos" className="text-gray-600 hover:text-gray-900">Productos</Link>
         <Link href="/contacto" className="text-gray-600 hover:text-gray-900">Contacto</Link>
-        <Link href="/administrar" className="text-gray-600 hover:text-gray-900">Administrar</Link>
+        {user?.isAdmin && <Link href="/administrar" className="text-gray-600 hover:text-gray-900">Administrar</Link>}
         <button className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600" onClick={handleSignIn} >{isLogged}</button>
         <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
         {!user || !user.photoURL ? (
