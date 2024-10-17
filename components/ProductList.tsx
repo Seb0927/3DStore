@@ -29,6 +29,7 @@ export default function ProductList() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const handleEdit = (product: Product) => {
     setCurrentProduct(product)
@@ -62,6 +63,16 @@ export default function ProductList() {
       setIsDeleteDialogOpen(false)
       setCurrentProduct(null)
     }
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0])
+    }
+  }
+
+  const handleUploadClick = () => {
+    document.getElementById('fileInput')?.click()
   }
 
   return (
@@ -115,11 +126,11 @@ export default function ProductList() {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">Nombre</Label>
-              <Input id="name" value={currentProduct?.name} className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, name: e.target.value})} />
+              <Input id="name" value={currentProduct?.name} className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, name: e.target.value })} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">Descripción</Label>
-              <Input id="description" value={currentProduct?.description} className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, description: e.target.value})} />
+              <Input id="description" value={currentProduct?.description} className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, description: e.target.value })} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="image" className="text-right">Imagen</Label>
@@ -127,7 +138,7 @@ export default function ProductList() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="price" className="text-right">Precio</Label>
-              <Input id="price" value={currentProduct?.price} className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, price: e.target.value})} />
+              <Input id="price" value={currentProduct?.price} className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, price: e.target.value })} />
             </div>
           </div>
           <DialogFooter>
@@ -144,19 +155,29 @@ export default function ProductList() {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">Nombre</Label>
-              <Input id="name" value={currentProduct?.name} className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, name: e.target.value})} />
+              <Input id="name" value={currentProduct?.name} className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, name: e.target.value })} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">Descripción</Label>
-              <Input id="description" value={currentProduct?.description} className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, description: e.target.value})} />
+              <Input id="description" value={currentProduct?.description} className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, description: e.target.value })} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="image" className="text-right">Imagen</Label>
-              <Button id="image" className="col-span-3">Subir imagen</Button>
+              <div>
+              <Button id="image" onClick={handleUploadClick} className="col-span-3">Subir imagen</Button>
+                <input
+                  id="fileInput"
+                  type="file"
+                  style={{ display: 'none' }}
+                  onChange={handleFileChange}
+                />
+                {selectedFile && <p>Selected file: {selectedFile.name}</p>}
+                {/* Rest of your component code */}
+              </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="price" className="text-right">Precio</Label>
-              <Input id="price" value={currentProduct?.price} className="col-span-3" onChange={(e) => setCurrentProduct({...currentProduct!, price: e.target.value})} />
+              <Input id="price" value={currentProduct?.price} className="col-span-3" onChange={(e) => setCurrentProduct({ ...currentProduct!, price: e.target.value })} />
             </div>
           </div>
           <DialogFooter>
