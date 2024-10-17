@@ -8,7 +8,6 @@ import { auth } from '@/firebase/firebase'
 import { useUser } from '@/context/UserContext'
 import { useState } from 'react'
 import { createUser, getUser } from '../models/user/users'
-import { create } from 'domain'
 
 
 export default function Header() {
