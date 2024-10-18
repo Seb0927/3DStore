@@ -3,10 +3,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { User } from 'lucide-react'
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { GoogleAuthProvider, signInWithPopup, getAuth, onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/firebase/firebase'
 import { useUser } from '@/context/UserContext'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createUser, getUser } from '../models/user/users'
 
 
@@ -14,6 +14,38 @@ export default function Header() {
   const authorization = auth;
   const { user, setUser } = useUser();
   const [ isLogged, setLogged ] = useState(false);
+
+  useEffect(() => {
+    console.log("xd")
+    const auth = getAuth();
+    onAuthStateChanged(auth, async (userInfo) => {
+      if (userInfo) {
+        const loggedUser = {
+          uid: userInfo.uid,
+          email: userInfo.email,
+          displayName: userInfo.displayName,
+          photoURL: userInfo.photoURL
+        }
+
+        createUser(loggedUser);
+        const isAdmin = await getUser(loggedUser.uid);
+
+        const userContext = {
+          uid: loggedUser.uid,
+          email: loggedUser.email,
+          displayName: loggedUser.displayName,
+          photoURL: loggedUser.photoURL,
+          isAdmin: isAdmin
+        }
+
+        setLogged(true);
+        setUser(userContext);
+
+        console.log("ewe")
+
+      }
+    })
+  }, []);
   
   const handleSignIn = async () => {
     const provider = new GoogleAuthProvider();
