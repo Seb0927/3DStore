@@ -97,7 +97,7 @@ export default function Header() {
           <Link href="/administrar" className="text-gray-600 hover:text-gray-900">Administrar</Link>
         ) : null}
           <button className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600" 
-            onClick={() => {isLoading ? null : handleSignIn()}} 
+            onClick={() => (isLoading ? null : handleSignIn())} 
             disabled={isLoading}> 
             {isLoading ? "..." : (isLogged ? "Cerrar sesión" : "Iniciar sesión")}
           </button>
