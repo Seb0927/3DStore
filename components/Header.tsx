@@ -3,10 +3,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { User } from 'lucide-react'
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { GoogleAuthProvider, signInWithPopup, getAuth, onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/firebase/firebase'
 import { useUser } from '@/context/UserContext'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createUser, getUser } from '../models/user/users'
 
 
@@ -14,6 +14,36 @@ export default function Header() {
   const authorization = auth;
   const { user, setUser } = useUser();
   const [ isLogged, setLogged ] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, async (userInfo) => {
+      if (userInfo) {
+        const loggedUser = {
+          uid: userInfo.uid,
+          email: userInfo.email,
+          displayName: userInfo.displayName,
+          photoURL: userInfo.photoURL
+        }
+
+        createUser(loggedUser);
+        const isAdmin = await getUser(loggedUser.uid);
+
+        const userContext = {
+          uid: loggedUser.uid,
+          email: loggedUser.email,
+          displayName: loggedUser.displayName,
+          photoURL: loggedUser.photoURL,
+          isAdmin: isAdmin
+        }
+
+        setLogged(true);
+        setUser(userContext);
+      }
+      setLoading(false);
+    })
+  }, []);
   
   const handleSignIn = async () => {
     const provider = new GoogleAuthProvider();
@@ -57,7 +87,7 @@ export default function Header() {
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-white shadow-sm">
       <div className="flex items-center">
-        <Image src="/images/placeholder.jpg" alt="Fabricks3D Logo" width={40} height={40} className="mr-2" />
+        <Image src="/images/placeholder.png" alt="Fabricks3D Logo" width={40} height={40} className="mr-2" />
         <span className="text-xl font-bold">Fabricks3D</span>
       </div>
       <nav className="flex items-center space-x-6">
@@ -66,7 +96,11 @@ export default function Header() {
         {user?.isAdmin ? (
           <Link href="/administrar" className="text-gray-600 hover:text-gray-900">Administrar</Link>
         ) : null}
-        <button className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600" onClick={handleSignIn} >{!isLogged ? ("Inicar sesión") : ("Cerrar sesión")}</button>
+          <button className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600" 
+            onClick={() => (isLoading ? null : handleSignIn())} 
+            disabled={isLoading}> 
+            {isLoading ? "..." : (isLogged ? "Cerrar sesión" : "Iniciar sesión")}
+          </button>
         <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
         {!user || !user.photoURL ? (
             <User size={20} className="text-gray-600" />

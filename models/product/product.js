@@ -1,6 +1,6 @@
 import { firestore, storage } from '../../firebase/firebase';
 import { doc, setDoc, getDoc, addDoc, collection, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes, deleteObject } from 'firebase/storage';
 
 export const createProduct = async (product) => {
     try {
@@ -76,8 +76,19 @@ export const updateProduct = async (id, product) => {
 export const deleteProduct = async (id) => {
     try {
         const productRef = doc(firestore, `products/${id}`);
-        await deleteDoc(productRef);
+        const productSnap = await getDoc(productRef);
+        if (productSnap.exists()) {
+            const productData = productSnap.data();
+            const imageUrl = productData.image;
+            if (imageUrl) {
+                const imageRef = ref(storage, imageUrl);
+                await deleteObject(imageRef);
+            }
+            await deleteDoc(productRef);
+        } else {
+            console.log("No such document!");
+        }
     } catch (error) {
-        console.error("Error deleting document: ", error);
+        console.error("Error deleting document or image: ", error);
     }
-}
+};

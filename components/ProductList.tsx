@@ -88,7 +88,7 @@ export default function ProductList() {
 
   }
 
-  const handleComfimnDelete = async () => {
+  const handleConfirmDelete = async () => {
     const id = currentProduct?.id
     deleteProduct(id)
     const products = await getProducts();
@@ -132,7 +132,7 @@ export default function ProductList() {
           <thead>
             <tr className="bg-gray-100">
               <th className="px-4 py-2 text-left">Nombre</th>
-              <th className="px-4 py-2 text-left">Descripción</th>
+              <th className="px-4 py-2 text-left max-w-3xl">Descripción</th>
               <th className="px-4 py-2 text-left">Imagen</th>
               <th className="px-4 py-2 text-left">Precio</th>
               <th className="px-4 py-2 text-left">Acción</th>
@@ -142,7 +142,7 @@ export default function ProductList() {
             {products.map((product) => (
               <tr key={product.id} className="border-b">
                 <td className="px-4 py-2">{product.name}</td>
-                <td className="px-4 py-2">{product.description}</td>
+                <td className="px-4 py-2 max-w-3xl">{product.description}</td>
                 <td className="px-4 py-2">
                   <Image src={product.image} alt={product.name} width={40} height={40} className="rounded-full" />
                 </td>
@@ -231,7 +231,7 @@ export default function ProductList() {
           <p>¿Está seguro de que desea eliminar {currentProduct?.name}?</p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Salir</Button>
-            <Button variant="destructive" onClick={handleComfimnDelete}>Borrar</Button>
+            <Button variant="destructive" onClick={handleConfirmDelete}>Borrar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
