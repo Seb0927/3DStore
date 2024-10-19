@@ -88,7 +88,7 @@ export default function ProductList() {
 
   }
 
-  const handleComfimnDelete = async () => {
+  const handleConfirmDelete = async () => {
     const id = currentProduct?.id
     deleteProduct(id)
     const products = await getProducts();
@@ -231,7 +231,7 @@ export default function ProductList() {
           <p>¿Está seguro de que desea eliminar {currentProduct?.name}?</p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Salir</Button>
-            <Button variant="destructive" onClick={handleComfimnDelete}>Borrar</Button>
+            <Button variant="destructive" onClick={handleConfirmDelete}>Borrar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
