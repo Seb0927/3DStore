@@ -14,9 +14,9 @@ export default function Header() {
   const authorization = auth;
   const { user, setUser } = useUser();
   const [ isLogged, setLogged ] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("xd")
     const auth = getAuth();
     onAuthStateChanged(auth, async (userInfo) => {
       if (userInfo) {
@@ -40,10 +40,8 @@ export default function Header() {
 
         setLogged(true);
         setUser(userContext);
-
-        console.log("ewe")
-
       }
+      setLoading(false);
     })
   }, []);
   
@@ -98,7 +96,11 @@ export default function Header() {
         {user?.isAdmin ? (
           <Link href="/administrar" className="text-gray-600 hover:text-gray-900">Administrar</Link>
         ) : null}
-        <button className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600" onClick={handleSignIn} >{!isLogged ? ("Inicar sesión") : ("Cerrar sesión")}</button>
+          <button className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600" 
+            onClick={() => {isLoading ? null : handleSignIn()}} 
+            disabled={isLoading}> 
+            {isLoading ? "..." : (isLogged ? "Cerrar sesión" : "Iniciar sesión")}
+          </button>
         <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
         {!user || !user.photoURL ? (
             <User size={20} className="text-gray-600" />
