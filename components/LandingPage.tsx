@@ -1,15 +1,25 @@
-import Image from 'next/image'
+'use client'
 
-const products = [
-  { id: 1, name: 'Taza', description: 'Taza de cerámica con patrón personalizado impreso en 3D', price: '$50.000', image: '/images/cup.png' },
-  { id: 2, name: 'Funda de teléfono', description: 'Funda de teléfono con diseño personalizado impreso en 3D', price: '$30.000', image: '/images/phonecase.png' },
-  { id: 3, name: 'Lámpara', description: 'Lámpara de mesa con base personalizada impresa en 3D', price: '$30.000', image: '/images/lamp.png' },
-  { id: 4, name: 'Miniatura', description: 'Escena en miniatura detallada con elementos impresos en 3D', price: '$70.000', image: '/images/mini.png' },
-  { id: 5, name: 'Estatua', description: 'Estatua con diseño personalizado impreso en 3D', price: '$30.000', image: '/images/statue.png' },
-  { id: 6, name: 'Maceta', description: 'Maceta con patrón personalizado impreso en 3D', price: '$30.000', image: '/images/pot.png' },
-]
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { getProducts } from '../models/product/product';
 
 export default function LandingPage() {
+  const [products, setProducts] = useState<{ id: number; image: string; name: string; description: string; price: string; }[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const products = await getProducts();
+      const formattedProducts = (products ?? []).map(product => ({
+        ...product,
+        price: "$ " + product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+      }));
+      setProducts(formattedProducts || []);
+    };
+
+    fetchProducts();
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold text-center mb-8">¡Hola mundo 3D!</h1>
@@ -31,5 +41,5 @@ export default function LandingPage() {
         ))}
       </div>
     </div>
-  )
+  );
 }
