@@ -9,11 +9,10 @@ import { useUser } from '@/context/UserContext'
 import { useState, useEffect } from 'react'
 import { createUser, getUser } from '../models/user/users'
 
-
 export default function Header() {
   const authorization = auth;
   const { user, setUser } = useUser();
-  const [ isLogged, setLogged ] = useState(false);
+  const [isLogged, setLogged] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,10 +24,10 @@ export default function Header() {
           email: userInfo.email,
           displayName: userInfo.displayName,
           photoURL: userInfo.photoURL
-        }
-
-        createUser(loggedUser);
-        const isAdmin = await getUser(loggedUser.uid);
+        };
+        await createUser(loggedUser);
+        const isAdminData = await getUser(loggedUser.uid);
+        const isAdmin = isAdminData ? true : false;
 
         const userContext = {
           uid: loggedUser.uid,
@@ -36,15 +35,15 @@ export default function Header() {
           displayName: loggedUser.displayName,
           photoURL: loggedUser.photoURL,
           isAdmin: isAdmin
-        }
+        };
 
         setLogged(true);
         setUser(userContext);
       }
       setLoading(false);
-    })
-  }, []);
-  
+    });
+  }, [setUser]);
+
   const handleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     if (!isLogged) {
@@ -56,18 +55,17 @@ export default function Header() {
           email: userInfo.email,
           displayName: userInfo.displayName,
           photoURL: userInfo.photoURL
-        }
-
-        createUser(loggedUser);
-        const isAdmin = await getUser(loggedUser.uid);
+        };
+        await createUser(loggedUser);
+        const isAdmin = await getUser(loggedUser.uid)
         const userContext = {
           uid: loggedUser.uid,
           email: loggedUser.email,
           displayName: loggedUser.displayName,
           photoURL: loggedUser.photoURL,
-          isAdmin: isAdmin
-        }
-        
+          isAdmin: isAdmin ? true : false
+        };
+
         setLogged(true);
         setUser(userContext);
       } catch (error) {
@@ -82,7 +80,7 @@ export default function Header() {
         console.log(error);
       }
     }
-  }
+  };
 
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-white shadow-sm">
@@ -96,19 +94,21 @@ export default function Header() {
         {user?.isAdmin ? (
           <Link href="/administrar" className="text-gray-600 hover:text-gray-900">Administrar</Link>
         ) : null}
-          <button className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600" 
-            onClick={() => (isLoading ? null : handleSignIn())} 
-            disabled={isLoading}> 
-            {isLoading ? "..." : (isLogged ? "Cerrar sesión" : "Iniciar sesión")}
-          </button>
+        <button className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600" 
+          onClick={() => (isLoading ? null : handleSignIn())} 
+          disabled={isLoading}> 
+          {isLoading ? "..." : (isLogged ? "Cerrar sesión" : "Iniciar sesión")}
+        </button>
         <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-        {!user || !user.photoURL ? (
+          {!user || !user.photoURL ? (
             <User size={20} className="text-gray-600" />
           ) : (
-            <img src={user.photoURL} alt="User profile" className="w-full h-full rounded-full" />
+            <button onClick={() => window.location.href = '/perfil'}>
+              <img src={user.photoURL} alt="User profile" className="w-full h-full rounded-full" />
+            </button>
           )}
         </div>
       </nav>
     </header>
-  )
+  );
 }
