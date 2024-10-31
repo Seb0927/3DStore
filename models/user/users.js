@@ -9,7 +9,11 @@ export const createUser = async (user) => {
             return;
         } else {
             const docData = {
-                isAdmin: false
+                isAdmin: false,
+                displayName: user.displayName || '', 
+                email: user.email || '',
+                address: user.address || '', 
+                phoneNumber: user.phoneNumber || ''
             }
             setDoc(userRef, docData);
         }
@@ -29,5 +33,19 @@ export const getUser = async (uid) => {
         }
     } catch (error) {
         console.error("Error getting document: ", error);
+    }
+}
+
+export const updateUser = async (user) => {
+    try {
+        const userRef = doc(firestore, `users/${user.uid}`);
+        await setDoc(userRef, {
+            displayName: user.displayName, 
+            email: user.email, 
+            address: user.address, 
+            phoneNumber: user.phoneNumber 
+        }, { merge: true });  
+    } catch (error) {
+        console.error("Error updating document: ", error);
     }
 }
