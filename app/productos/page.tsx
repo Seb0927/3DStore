@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { getProducts } from '@/models/product/product'
 import { useState, useEffect } from 'react'
 import { Skeleton } from "@/components/ui/skeleton"
+import Header from '@/components/Header'
 
 interface Product {
   id: string
@@ -65,6 +66,8 @@ export default function ProductsList() {
   }
 
   return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Productos</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -100,6 +103,7 @@ export default function ProductsList() {
           No products found.
         </p>
       )}
+    </div>
     </div>
   )
 }
