@@ -13,7 +13,8 @@ export const createUser = async (user) => {
                 displayName: user.displayName || '', 
                 email: user.email || '',
                 address: user.address || '', 
-                phoneNumber: user.phoneNumber || ''
+                phoneNumber: user.phoneNumber || '',
+                photoURL: user.photoURL || ''
             }
             setDoc(userRef, docData);
         }
@@ -27,7 +28,7 @@ export const getUser = async (uid) => {
         const userRef = doc(firestore, `users/${uid}`);
         const docSnap = await getDoc(userRef);
         if (docSnap.exists()) {
-            return docSnap.data().isAdmin;
+            return docSnap.data();
         } else {
             console.log("No such document!");
         }
@@ -40,8 +41,6 @@ export const updateUser = async (user) => {
     try {
         const userRef = doc(firestore, `users/${user.uid}`);
         await setDoc(userRef, {
-            displayName: user.displayName, 
-            email: user.email, 
             address: user.address, 
             phoneNumber: user.phoneNumber 
         }, { merge: true });  
