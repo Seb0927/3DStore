@@ -5,6 +5,8 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 interface User {
   uid: string;
   email: string | null;
+  address: string | null;
+  phoneNumber: string | null;
   displayName: string | null;
   photoURL: string | null;
   isAdmin: boolean | null;
