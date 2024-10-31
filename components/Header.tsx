@@ -19,12 +19,16 @@ export default function Header() {
     const auth = getAuth();
     onAuthStateChanged(auth, async (userInfo) => {
       if (userInfo) {
-        const isAdminData = await getUser(userInfo.uid);
-        const isAdmin = isAdminData ? true : false;
+        const userData = await getUser(userInfo.uid);
+        console.log(userInfo)
+        console.log(userData)
+        const isAdmin = userData?.isAdmin ? true : false;
         
         const loggedUser = {
           uid: userInfo.uid,
           email: userInfo.email,
+          address: userData?.address,
+          phoneNumber: userData?.phoneNumber,
           displayName: userInfo.displayName,
           photoURL: userInfo.photoURL,
           isAdmin: isAdmin
@@ -56,6 +60,8 @@ export default function Header() {
 
         const userContext = {
           uid: loggedUser.uid,
+          address: '',
+          phoneNumber: '',
           email: loggedUser.email,
           displayName: loggedUser.displayName,
           photoURL: loggedUser.photoURL,
