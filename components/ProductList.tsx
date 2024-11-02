@@ -149,8 +149,8 @@ export default function ProductList() {
                 </td>
                 <td className="px-4 py-2">{product.price}</td>
                 <td className="px-4 py-2">
-                  <Button variant="link" className="mr-2" onClick={() => handleEdit(product)}>Edit</Button>
-                  <Button variant="link" onClick={() => handleDelete(product)}>Delete</Button>
+                  <Button variant="link" className="mr-2" onClick={() => handleEdit(product)}>Editar</Button>
+                  <Button variant="link" onClick={() => handleDelete(product)}>Borrar</Button>
                 </td>
               </tr>
             ))}
