@@ -19,26 +19,23 @@ export default function Header() {
     const auth = getAuth();
     onAuthStateChanged(auth, async (userInfo) => {
       if (userInfo) {
+        const userData = await getUser(userInfo.uid);
+        console.log(userInfo)
+        console.log(userData)
+        const isAdmin = userData?.isAdmin ? true : false;
+        
         const loggedUser = {
           uid: userInfo.uid,
           email: userInfo.email,
+          address: userData?.address,
+          phoneNumber: userData?.phoneNumber,
           displayName: userInfo.displayName,
-          photoURL: userInfo.photoURL
-        };
-        await createUser(loggedUser);
-        const isAdminData = await getUser(loggedUser.uid);
-        const isAdmin = isAdminData ? true : false;
-
-        const userContext = {
-          uid: loggedUser.uid,
-          email: loggedUser.email,
-          displayName: loggedUser.displayName,
-          photoURL: loggedUser.photoURL,
+          photoURL: userInfo.photoURL,
           isAdmin: isAdmin
         };
 
         setLogged(true);
-        setUser(userContext);
+        setUser(loggedUser);
       }
       setLoading(false);
     });
@@ -56,14 +53,19 @@ export default function Header() {
           displayName: userInfo.displayName,
           photoURL: userInfo.photoURL
         };
+
         await createUser(loggedUser);
-        const isAdmin = await getUser(loggedUser.uid)
+        const isAdminData = await getUser(loggedUser.uid)
+        const isAdmin = isAdminData ? true : false;
+
         const userContext = {
           uid: loggedUser.uid,
+          address: '',
+          phoneNumber: '',
           email: loggedUser.email,
           displayName: loggedUser.displayName,
           photoURL: loggedUser.photoURL,
-          isAdmin: isAdmin ? true : false
+          isAdmin: isAdmin
         };
 
         setLogged(true);
@@ -71,6 +73,7 @@ export default function Header() {
       } catch (error) {
         console.log(error);
       }
+
     } else {
       try {
         await authorization.signOut();
@@ -104,7 +107,7 @@ export default function Header() {
             <User size={20} className="text-gray-600" />
           ) : (
             <button onClick={() => window.location.href = '/perfil'}>
-              <img src={user.photoURL} alt="User profile" className="w-full h-full rounded-full" />
+              <Image width={40} height={40} src={user.photoURL} alt="User profile" className="w-full h-full rounded-full" />
             </button>
           )}
         </div>

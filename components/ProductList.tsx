@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { uploadImage, createProduct, getProducts, getProduct, updateProduct, deleteImage, deleteProduct } from "../models/product/product"
 
 interface Product {
@@ -148,8 +149,8 @@ export default function ProductList() {
                 </td>
                 <td className="px-4 py-2">{product.price}</td>
                 <td className="px-4 py-2">
-                  <Button variant="link" className="mr-2" onClick={() => handleEdit(product)}>Edit</Button>
-                  <Button variant="link" onClick={() => handleDelete(product)}>Delete</Button>
+                  <Button variant="link" className="mr-2" onClick={() => handleEdit(product)}>Editar</Button>
+                  <Button variant="link" onClick={() => handleDelete(product)}>Borrar</Button>
                 </td>
               </tr>
             ))}
@@ -169,7 +170,7 @@ export default function ProductList() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">Descripción</Label>
-              <Input id="edit_description" className="col-span-3" value={currentProduct?.description} onChange={(e) => setCurrentProduct({ ...currentProduct!, description: e.target.value })} />
+              <Textarea id="edit_description" className="col-span-3" value={currentProduct?.description} onChange={(e) => setCurrentProduct({ ...currentProduct!, description: e.target.value })} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="image" className="text-right">Imagen</Label>
@@ -202,7 +203,7 @@ export default function ProductList() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">Descripción</Label>
-              <Input type="text" id="description" className="col-span-3" onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })} />
+              <Textarea id="description" className="col-span-3" onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="image" className="text-right">Imagen</Label>

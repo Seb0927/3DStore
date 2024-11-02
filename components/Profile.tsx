@@ -38,7 +38,6 @@ export default function UserProfile() {
       };
       await updateUser(updatedUser);
       setUser(updatedUser);
-      console.log('Saving profile data:', { address, phoneNumber });
     }
   };
 
