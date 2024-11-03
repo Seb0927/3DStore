@@ -1,11 +1,22 @@
+"use client"
+
+import { useState, useEffect } from 'react'
 import { getProducts } from '@/models/product/product'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
-export default async function LandingPage() {
-  const products = await getProducts()
-  
+export default function LandingPage() {
+  const [products, setProducts] = useState<any[] | undefined>([])
+
+  useEffect(() => {
+    async function fetchProducts() {
+      const products = await getProducts()
+      setProducts(products)
+    }
+    fetchProducts()
+  }, [])
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold text-center mb-8">¡Hola mundo 3D!</h1>
