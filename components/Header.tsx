@@ -20,8 +20,6 @@ export default function Header() {
     onAuthStateChanged(auth, async (userInfo) => {
       if (userInfo) {
         const userData = await getUser(userInfo.uid);
-        console.log(userInfo)
-        console.log(userData)
         const isAdmin = userData?.isAdmin ? true : false;
         
         const loggedUser = {
@@ -55,8 +53,8 @@ export default function Header() {
         };
 
         await createUser(loggedUser);
-        const isAdminData = await getUser(loggedUser.uid)
-        const isAdmin = isAdminData ? true : false;
+        const userData = await getUser(loggedUser.uid);
+        const isAdmin = userData?.isAdmin;
 
         const userContext = {
           uid: loggedUser.uid,
