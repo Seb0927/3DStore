@@ -6,12 +6,21 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  price: string;
+}
+
 export default function LandingPage() {
-  const [products, setProducts] = useState<any[] | undefined>([])
+  const [products, setProducts] = useState<Product[] | undefined>([])
 
   useEffect(() => {
     async function fetchProducts() {
       const products = await getProducts()
+      console.log(products)
       setProducts(products)
     }
     fetchProducts()
