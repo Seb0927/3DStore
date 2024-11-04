@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { User } from 'lucide-react'
+import { User, ShoppingCart } from 'lucide-react'
 import { GoogleAuthProvider, signInWithPopup, getAuth, onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/firebase/firebase'
 import { useUser } from '@/context/UserContext'
@@ -21,7 +21,7 @@ export default function Header() {
       if (userInfo) {
         const userData = await getUser(userInfo.uid);
         const isAdmin = userData?.isAdmin ? true : false;
-        
+
         const loggedUser = {
           uid: userInfo.uid,
           email: userInfo.email,
@@ -92,14 +92,23 @@ export default function Header() {
       <nav className="flex items-center space-x-6">
         <Link href="/productos" className="text-gray-600 hover:text-gray-900">Productos</Link>
         <Link href="/contacto" className="text-gray-600 hover:text-gray-900">Contacto</Link>
-        {user?.isAdmin ? (
+        {user?.isAdmin ?
           <Link href="/administrar" className="text-gray-600 hover:text-gray-900">Administrar</Link>
-        ) : null}
-        <button className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600" 
-          onClick={() => (isLoading ? null : handleSignIn())} 
-          disabled={isLoading}> 
+          :
+          null
+        }
+        <button className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+          onClick={() => (isLoading ? null : handleSignIn())}
+          disabled={isLoading}>
           {isLoading ? "..." : (isLogged ? "Cerrar sesión" : "Iniciar sesión")}
         </button>
+        {user && !user.isAdmin ?
+          <Link href="/encargar">
+            <div className='relative'>
+              <ShoppingCart className='w-7 h-7' />
+            </div>
+          </Link> : null
+        }
         <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
           {!user || !user.photoURL ? (
             <User size={20} className="text-gray-600" />
