@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Phone, Instagram } from "lucide-react"
 
 export default function Component() {
@@ -9,7 +10,7 @@ export default function Component() {
             <div className="relative w-24 h-24 mx-auto">
               <div className="absolute inset-0 bg-blue-100 rounded-xl rotate-6"></div>
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl">
-                <img
+                <Image
                   src="/images/placeholder.png" 
                   alt="Fabricks3D Logo"
                   className="w-full h-full object-contain p-2"
