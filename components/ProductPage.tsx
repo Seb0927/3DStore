@@ -1,7 +1,4 @@
-import { useState, useEffect } from 'react'
-import { DocumentData } from 'firebase/firestore'
 import { getProduct } from '@/models/product/product'
-import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ShoppingCart } from 'lucide-react'
@@ -19,8 +16,8 @@ export default async function ProductPage({ id }: ProductPageProps) {
         <div className="space-y-4">
           <div className="relative aspect-square overflow-hidden rounded-lg border bg-muted">
             <Image
-              src={product.image || '/placeholder.svg'}
-              alt={product.name}
+              src={product?.image || '/placeholder.svg'}
+              alt={product?.name}
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
@@ -30,13 +27,13 @@ export default async function ProductPage({ id }: ProductPageProps) {
         </div>
         <div className="space-y-6">
           <div className="space-y-2">
-            <h1 className="text-5xl font-bold tracking-tight">{product.name}</h1>
+            <h1 className="text-5xl font-bold tracking-tight">{product?.name}</h1>
             <p className="text-4xl font-bold tracking-tight">
-              $ {product.price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+              $ {product?.price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
             </p>
           </div>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            {product.description}
+            {product?.description}
           </p>
 
           <div className="space-y-4 pt-4">
