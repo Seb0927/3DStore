@@ -14,7 +14,8 @@ export const createUser = async (user) => {
                 email: user.email || '',
                 address: user.address || '', 
                 phoneNumber: user.phoneNumber || '',
-                photoURL: user.photoURL || ''
+                photoURL: user.photoURL || '',
+                shoppingCart: user.shoppingCart || [],
             }
             setDoc(userRef, docData);
         }

@@ -29,7 +29,8 @@ export default function Header() {
           phoneNumber: userData?.phoneNumber,
           displayName: userInfo.displayName,
           photoURL: userInfo.photoURL,
-          isAdmin: isAdmin
+          isAdmin: isAdmin,
+          shoppingCart: userData?.shoppingCart
         };
 
         setLogged(true);
@@ -63,7 +64,8 @@ export default function Header() {
           email: loggedUser.email,
           displayName: loggedUser.displayName,
           photoURL: loggedUser.photoURL,
-          isAdmin: isAdmin
+          isAdmin: isAdmin,
+          shoppingCart: []
         };
 
         setLogged(true);
