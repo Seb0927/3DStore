@@ -11,10 +11,10 @@ export default async function ProductPage({ id }: ProductPageProps) {
   const product = await getProduct(id)
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-44 py-8">
       <div className="grid lg:grid-cols-2 gap-8 items-start">
-        <div className="space-y-4">
-          <div className="relative aspect-square overflow-hidden rounded-lg border bg-muted">
+        <div className="flex items-center justify-center space-y-4 h-full">
+          <div className="relative aspect-square overflow-hidden rounded-lg border bg-muted h-5/6 w-5/6">
             <Image
               src={product?.image || '/placeholder.svg'}
               alt={product?.name}
@@ -27,12 +27,12 @@ export default async function ProductPage({ id }: ProductPageProps) {
         </div>
         <div className="space-y-6">
           <div className="space-y-2">
-            <h1 className="text-5xl font-bold tracking-tight">{product?.name}</h1>
-            <p className="text-4xl font-bold tracking-tight">
+            <h1 className="text-4xl font-bold tracking-tight">{product?.name}</h1>
+            <p className="text-3xl font-bold tracking-tight">
               $ {product?.price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
             </p>
           </div>
-          <p className="text-xl text-muted-foreground leading-relaxed">
+          <p className="text-lg text-muted-foreground leading-relaxed">
             {product?.description}
           </p>
 
