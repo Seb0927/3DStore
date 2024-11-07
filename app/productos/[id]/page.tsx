@@ -15,7 +15,7 @@ export default async function Page({params: { id }}: ProductPageProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <ProductPage product={product} />
+      <ProductPage product={{...product, id: id}} />
     </div>
   )
 }

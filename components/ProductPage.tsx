@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { useUser } from '@/context/UserContext'
 import { DocumentData } from 'firebase/firestore';
+import { updateUser } from '@/models/user/users';
 import { ShoppingCart } from 'lucide-react'
 
 interface ProductPageProps {
@@ -42,7 +43,11 @@ export default function ProductPage({ product }: ProductPageProps) {
           <div className="space-y-4 pt-4">
             <Button
               size="lg"
-              
+              onClick={() => 
+                (user ? (updateUser({...user, shoppingCart: [...user.shoppingCart, product?.id]}),
+                  setUser({...user, shoppingCart: [...user.shoppingCart, product?.id]}),
+                console.log(user)) 
+                : null)}
               disabled={!!!user}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             >

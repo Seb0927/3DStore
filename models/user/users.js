@@ -43,7 +43,8 @@ export const updateUser = async (user) => {
         const userRef = doc(firestore, `users/${user.uid}`);
         await setDoc(userRef, {
             address: user.address, 
-            phoneNumber: user.phoneNumber 
+            phoneNumber: user.phoneNumber,
+            shoppingCart: user.shoppingCart
         }, { merge: true });  
     } catch (error) {
         console.error("Error updating document: ", error);
