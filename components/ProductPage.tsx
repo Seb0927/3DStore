@@ -1,6 +1,5 @@
 "use client"
 
-import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { useUser } from '@/context/UserContext'
@@ -43,10 +42,13 @@ export default function ProductPage({ product }: ProductPageProps) {
           <div className="space-y-4 pt-4">
             <Button
               size="lg"
+              
+              disabled={!!!user}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             >
-              <ShoppingCart className="mr-2 h-5 w-5" />
-              Añadir al carrito
+              <ShoppingCart
+                className="mr-2 h-5 w-5" />
+              {user ? "Añadir al carrito" : "Inicia sesión para añadir"}
             </Button>
           </div>
           <div className="border rounded-lg p-4 bg-muted">
