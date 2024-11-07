@@ -1,14 +1,18 @@
-import { getProduct } from '@/models/product/product'
+"use client"
+
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
+import { useUser } from '@/context/UserContext'
+import { DocumentData } from 'firebase/firestore';
 import { ShoppingCart } from 'lucide-react'
 
 interface ProductPageProps {
-  id: string
+  product: DocumentData | undefined;
 }
 
-export default async function ProductPage({ id }: ProductPageProps) {
-  const product = await getProduct(id)
+export default function ProductPage({ product }: ProductPageProps) {
+  const { user, setUser } = useUser();
 
   return (
     <div className="container mx-auto px-44 py-8">
