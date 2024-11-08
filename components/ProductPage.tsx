@@ -14,6 +14,20 @@ interface ProductPageProps {
 export default function ProductPage({ product }: ProductPageProps) {
   const { user, setUser } = useUser();
 
+  const handleAddToCart = () => {
+    if (user) {
+      const newShoppingCart = { ...user.shoppingCart };
+      if (newShoppingCart[product?.id]) {
+        newShoppingCart[product?.id] += 1;
+      } else {
+        newShoppingCart[product?.id] = 1;
+      }
+      const updatedUser = { ...user, shoppingCart: newShoppingCart };
+      setUser(updatedUser);
+      updateUser(updatedUser);
+    }
+  };
+
   return (
     <div className="container mx-auto px-44 py-8">
       <div className="grid lg:grid-cols-2 gap-8 items-start">
@@ -43,11 +57,7 @@ export default function ProductPage({ product }: ProductPageProps) {
           <div className="space-y-4 pt-4">
             <Button
               size="lg"
-              onClick={() => 
-                (user ? (updateUser({...user, shoppingCart: [...user.shoppingCart, product?.id]}),
-                  setUser({...user, shoppingCart: [...user.shoppingCart, product?.id]}),
-                console.log(user)) 
-                : null)}
+              onClick={handleAddToCart}
               disabled={!!!user}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             >
