@@ -14,6 +14,8 @@ export default function Component() {
                   src="/images/placeholder.png" 
                   alt="Fabricks3D Logo"
                   className="w-full h-full object-contain p-2"
+                  width={50}
+                  height={50}
                 />
               </div>
             </div>
