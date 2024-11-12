@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { useUser } from "@/context/UserContext"
 import { getProduct } from "@/models/product/product"
+import { updateUser } from "@/models/user/users"
 import { ArrowLeft, ArrowRight, Minus, Plus } from "lucide-react"
 
 interface CartItem {
@@ -42,6 +43,16 @@ export default function Order() {
     }
   }
 
+  const updateCartUser = async (cart: { [productId: string]: number }) => {
+    if (user) {
+      const updatedUser = {
+        ...user,
+        shoppingCart: cart
+      }
+      await updateUser(updatedUser)
+    }
+  }
+
   const updateQuantity = (id: string, newQuantity: number) => {
     if (newQuantity < 1) return
     setItems(items.map(item =>
@@ -55,15 +66,18 @@ export default function Order() {
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
 
+  // Fetch the items that the user has in its shopping cart
   useEffect(() => {
     fetchCartItems()
   }, [user])
 
+  // Update the changes to the shoppingCart made by the user
   useEffect(() => {
-
-  })
-
-  console.log(items)
+    updateCartUser(items.reduce((cart: { [productId: string]: number }, item) => {
+      cart[item.id] = item.quantity
+      return cart
+    }, {}))
+  }, [items])
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
