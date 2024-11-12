@@ -65,7 +65,7 @@ export default function Header() {
           displayName: loggedUser.displayName,
           photoURL: loggedUser.photoURL,
           isAdmin: isAdmin,
-          shoppingCart: []
+          shoppingCart: {}
         };
 
         setLogged(true);
