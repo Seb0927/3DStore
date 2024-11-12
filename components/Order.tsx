@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import { useUser } from "@/context/UserContext"
 import { getProduct } from "@/models/product/product"
 import { updateUser } from "@/models/user/users"
+import { createOrder } from "@/models/order/order"
 import { ArrowLeft, ArrowRight, Minus, Plus } from "lucide-react"
 
 interface CartItem {
@@ -40,6 +41,7 @@ export default function Order() {
         }
       }
       setItems(cartItems)
+      console.log(cartItems)
     }
   }
 
@@ -50,6 +52,27 @@ export default function Order() {
         shoppingCart: cart
       }
       await updateUser(updatedUser)
+    }
+  }
+
+  const order = async () => {
+    if (user && user.shoppingCart) {
+      const orderItems = items.map(item => ({
+        productId: item.id,
+        quantity: item.quantity
+      }))
+
+      const order = {
+        userId: user.uid,
+        shoppingCart: orderItems,
+        total: items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      }
+
+      console.log(order)
+
+      await createOrder(order)
+      await updateUser({ ...user, shoppingCart: {} })
+      setItems([])
     }
   }
 
@@ -168,7 +191,9 @@ export default function Order() {
           <ArrowLeft className="h-4 w-4" />
           <span>Volver al catálogo</span>
         </Button>
-        <Button className="w-full md:w-auto flex items-center justify-center space-x-2">
+        <Button 
+        onClick={order}
+        className="w-full md:w-auto flex items-center justify-center space-x-2">
           <span>Ordenar</span>
           <ArrowRight className="h-4 w-4" />
         </Button>
