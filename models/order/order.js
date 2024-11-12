@@ -1,28 +1,36 @@
 import { firestore } from '../../firebase/firebase';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, addDoc, collection, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 
 export const createOrder = async (order) => {
   try {
-    const orderRef = doc(firestore, `orders/${order.id}`);
-    const docSnap = await getDoc(orderRef);
-    if (docSnap.exists()) {
-      return;
-    } else {
-      const docData = {
-        userId: order.userId,
-        orderItems: order.shoppingCart,
-        total: order.total,
-      }
-      setDoc(orderRef, docData)
+    const doc = {
+      userId: order.userId,
+      orderItems: order.shoppingCart,
+      total: order.total,
     }
+    const docRef = await addDoc(collection(firestore, "orders"), doc);
+    return docRef
   } catch (error) {
     console.error("Error adding document: ", error);
   }
 }
 
-export const getOrder = async (uid) => {
+export const getOrders = async() => {
   try {
-    const orderRef = doc(firestore, `orders/${uid}`);
+    const orders = [];
+    const querySnapshot = await getDocs(collection(firestore, "orders"));
+    querySnapshot.forEach((doc) => {
+      orders.push({ id: doc.id, ...doc.data() });
+    });
+    return orders;
+  } catch (error) {
+    console.error("Error getting documents: ", error);
+  }
+}
+
+export const getOrder = async (id) => {
+  try {
+    const orderRef = doc(firestore, `orders/${id}`);
     const docSnap = await getDoc(orderRef);
     if (docSnap.exists()) {
       return docSnap.data();
@@ -34,13 +42,10 @@ export const getOrder = async (uid) => {
   }
 }
 
-export const updateOrder = async (order) => {
-  try {
-    const orderRef = doc(firestore, `orders/${order.id}`);
-    await setDoc(orderRef, {
-      orderItems: order.shoppingCart,
-      total: order.total,
-    }, { merge: true });
+export const updateOrder = async (id, order) => {
+  try{
+    const orderRef = doc(firestore, `orders/${id}`);
+    await setDoc(orderRef, order, {merge:true});
   } catch (error) {
     console.error("Error updating document: ", error);
   }
@@ -48,10 +53,10 @@ export const updateOrder = async (order) => {
 
 export const deleteOrder = async (id) => {
   try {
-      const orderRef = doc(firestore, `orders/${id}`);
-      await deleteDoc(orderRef);
-      console.log("Order deleted successfully");
+    const orderRef = doc(firestore, `orders/${id}`);
+    await deleteDoc(orderRef);
+    console.log("Order deleted successfully");
   } catch (error) {
-      console.error("Error deleting document: ", error);
+    console.error("Error deleting document: ", error);
   }
 };
