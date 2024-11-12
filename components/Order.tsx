@@ -22,31 +22,25 @@ export default function Order() {
   const { user } = useUser();
   const [items, setItems] = useState<CartItem[]>([])
 
-  useEffect(() => {
-    const fetchCarItems = async () => {
-      if (user && user.shoppingCart) {
-        const carItems: CartItem[] = []
-        for (const productId in user.shoppingCart) {
-          const product = await getProduct(productId);
-          if (product) {
-            carItems.push({
-              id: productId,
-              name: product.name,
-              platform: product.platform,
-              image: product.image,
-              price: product.price,
-              quantity: user.shoppingCart[productId]
-            })
-          }
+  const fetchCartItems = async () => {
+    if (user && user.shoppingCart) {
+      const cartItems: CartItem[] = []
+      for (const productId in user.shoppingCart) {
+        const product = await getProduct(productId);
+        if (product) {
+          cartItems.push({
+            id: productId,
+            name: product.name,
+            platform: product.platform,
+            image: product.image,
+            price: product.price,
+            quantity: user.shoppingCart[productId]
+          })
         }
-        setItems(carItems)
       }
+      setItems(cartItems)
     }
-
-    fetchCarItems()
-  }, [user])
-
-  console.log(items)
+  }
 
   const updateQuantity = (id: string, newQuantity: number) => {
     if (newQuantity < 1) return
@@ -60,6 +54,16 @@ export default function Order() {
   }
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
+
+  useEffect(() => {
+    fetchCartItems()
+  }, [user])
+
+  useEffect(() => {
+
+  })
+
+  console.log(items)
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
