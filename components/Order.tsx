@@ -82,8 +82,8 @@ export default function Order() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Shopping Cart</h1>
-        <span className="text-lg">{totalItems} Items</span>
+        <h1 className="text-2xl font-bold">Carrito de compras</h1>
+        <span className="text-lg">{totalItems} {totalItems === 1 ? 'Producto' : 'Productos'}</span>
       </div>
 
       <Separator className="mb-8" />
@@ -117,7 +117,7 @@ export default function Order() {
                         onClick={() => removeItem(item.id)}
                         className="text-sm text-blue-500 hover:underline mt-1"
                       >
-                        Remove
+                        Eliminar
                       </button>
                     </div>
                   </div>
@@ -166,10 +166,10 @@ export default function Order() {
       <div className="flex flex-col md:flex-row justify-between items-center mt-8 space-y-4 md:space-y-0">
         <Button variant="outline" className="w-full md:w-auto flex items-center justify-center space-x-2">
           <ArrowLeft className="h-4 w-4" />
-          <span>Continue Shopping</span>
+          <span>Volver al catálogo</span>
         </Button>
         <Button className="w-full md:w-auto flex items-center justify-center space-x-2">
-          <span>Order</span>
+          <span>Ordenar</span>
           <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
