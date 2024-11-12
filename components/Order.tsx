@@ -1,14 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowLeft, ArrowRight, Minus, Plus } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
+import { useUser } from "@/context/UserContext"
+import { getProduct } from "@/models/product/product"
+import { ArrowLeft, ArrowRight, Minus, Plus } from "lucide-react"
 
 interface CartItem {
-  id: number
+  id: string
   name: string
   platform: string
   image: string
@@ -17,41 +19,43 @@ interface CartItem {
 }
 
 export default function Order() {
-  const [items, setItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: "FIFA 19",
-      platform: "PS4",
-      image: "/placeholder.svg",
-      price: 44.00,
-      quantity: 2
-    },
-    {
-      id: 2,
-      name: "Glacier White 500GB",
-      platform: "PS4",
-      image: "/placeholder.svg",
-      price: 249.99,
-      quantity: 1
-    },
-    {
-      id: 3,
-      name: "Platinum Headset",
-      platform: "PS4",
-      image: "/placeholder.svg",
-      price: 119.99,
-      quantity: 1
-    }
-  ])
+  const { user } = useUser();
+  const [items, setItems] = useState<CartItem[]>([])
 
-  const updateQuantity = (id: number, newQuantity: number) => {
+  useEffect(() => {
+    const fetchCarItems = async () => {
+      if (user && user.shoppingCart) {
+        const carItems: CartItem[] = []
+        for (const productId in user.shoppingCart) {
+          const product = await getProduct(productId);
+          if (product) {
+            carItems.push({
+              id: productId,
+              name: product.name,
+              platform: product.platform,
+              image: product.image,
+              price: product.price,
+              quantity: user.shoppingCart[productId]
+            })
+          }
+        }
+        setItems(carItems)
+      }
+    }
+
+    fetchCarItems()
+  }, [user])
+
+  console.log(items)
+
+  const updateQuantity = (id: string, newQuantity: number) => {
     if (newQuantity < 1) return
-    setItems(items.map(item => 
+    setItems(items.map(item =>
       item.id === id ? { ...item, quantity: newQuantity } : item
     ))
   }
 
-  const removeItem = (id: number) => {
+  const removeItem = (id: string) => {
     setItems(items.filter(item => item.id !== id))
   }
 
@@ -63,17 +67,17 @@ export default function Order() {
         <h1 className="text-2xl font-bold">Shopping Cart</h1>
         <span className="text-lg">{totalItems} Items</span>
       </div>
-      
+
       <Separator className="mb-8" />
 
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="hidden md:table-header-group">
             <tr className="text-left border-b">
-              <th className="pb-4 font-medium">PRODUCT DETAILS</th>
-              <th className="pb-4 font-medium">QUANTITY</th>
-              <th className="pb-4 font-medium">PRICE</th>
-              <th className="pb-4 font-medium">TOTAL</th>
+              <th className="pb-4 font-semibold">Producto</th>
+              <th className="pb-4 font-semibold">Cantidad</th>
+              <th className="pb-4 font-semibold">Precio</th>
+              <th className="pb-4 font-semibold">Total</th>
             </tr>
           </thead>
           <tbody>
@@ -129,11 +133,11 @@ export default function Order() {
                 </td>
                 <td className="py-4 flex justify-between md:table-cell">
                   <span className="md:hidden font-medium">Price:</span>
-                  <span>£{item.price.toFixed(2)}</span>
+                  <span>${item.price}</span>
                 </td>
                 <td className="py-4 flex justify-between md:table-cell">
                   <span className="md:hidden font-medium">Total:</span>
-                  <span>£{(item.price * item.quantity).toFixed(2)}</span>
+                  <span>${(item.price * item.quantity)}</span>
                 </td>
               </tr>
             ))}
