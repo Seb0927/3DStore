@@ -68,19 +68,17 @@ export default function Order() {
         productId: item.id,
         quantity: item.quantity
       }))
-
+      
       const order = {
         userId: user.uid,
         shoppingCart: orderItems,
         total: items.reduce((sum, item) => sum + item.price * item.quantity, 0)
       }
 
-      console.log(order)
-
-      await createOrder(order)
-      await updateUser({ ...user, shoppingCart: {} })
-      setItems([])
-    }
+      await createOrder(order, user.email)
+      //await updateUser({ ...user, shoppingCart: {} })
+      //setItems([])
+    } 
   }
 
   const updateQuantity = (id: string, newQuantity: number) => {

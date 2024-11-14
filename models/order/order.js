@@ -1,16 +1,33 @@
 import { firestore } from '../../firebase/firebase';
 import { doc, setDoc, getDoc, addDoc, collection, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import {sendEmail} from './orderEmail.js';
+import { getProduct } from '../product/product';
 
-export const createOrder = async (order) => {
+export const createOrder = async (order,email) => {
   try {
+    var cartItems = [];
+
     const doc = {
       userId: order.userId,
       orderItems: order.shoppingCart,
       total: order.total,
     }
     const docRef = await addDoc(collection(firestore, "orders"), doc);
-    sendEmail('josemanuelpalmaoquendo75@gmail.com');
+        
+    for (let i=0; i < order.shoppingCart.length; i++) {
+      const item = order.shoppingCart[i];
+      const product = await getProduct(item.productId);
+      if (product) {
+        cartItems.push({
+          id: item.productId,
+          name: product.name,
+          image: product.image,
+          price: product.price,
+          quantity: item.quantity
+        })
+      }
+    }
+    sendEmail(email, cartItems) ;
     return docRef
   } catch (error) {
     console.error("Error adding document: ", error);
