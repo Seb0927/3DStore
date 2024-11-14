@@ -10,6 +10,7 @@ import { getProduct } from "@/models/product/product"
 import { updateUser } from "@/models/user/users"
 import { createOrder } from "@/models/order/order"
 import { ArrowLeft, ArrowRight, Minus, Plus } from "lucide-react"
+import { useRouter } from 'next/navigation'
 
 interface CartItem {
   id: string
@@ -23,6 +24,12 @@ interface CartItem {
 export default function Order() {
   const { user } = useUser();
   const [items, setItems] = useState<CartItem[]>([])
+  const router = useRouter()
+  
+  const handleCatalog = () => {
+    // Navigate to the catalog page
+    router.push('/')
+  }
 
   const fetchCartItems = async () => {
     if (user && user.shoppingCart) {
@@ -187,7 +194,7 @@ export default function Order() {
       </div>
 
       <div className="flex flex-col md:flex-row justify-between items-center mt-8 space-y-4 md:space-y-0">
-        <Button variant="outline" className="w-full md:w-auto flex items-center justify-center space-x-2">
+        <Button variant="outline" className="w-full md:w-auto flex items-center justify-center space-x-2" onClick={handleCatalog}>
           <ArrowLeft className="h-4 w-4" />
           <span>Volver al catálogo</span>
         </Button>
