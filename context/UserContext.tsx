@@ -10,6 +10,7 @@ interface User {
   displayName: string | null;
   photoURL: string | null;
   isAdmin: boolean | null;
+  shoppingCart: { [productId: string]: number };
 }
 
 interface UserContextProps {

@@ -14,7 +14,8 @@ export const createUser = async (user) => {
                 email: user.email || '',
                 address: user.address || '', 
                 phoneNumber: user.phoneNumber || '',
-                photoURL: user.photoURL || ''
+                photoURL: user.photoURL || '',
+                shoppingCart: user.shoppingCart || [],
             }
             setDoc(userRef, docData);
         }
@@ -42,7 +43,8 @@ export const updateUser = async (user) => {
         const userRef = doc(firestore, `users/${user.uid}`);
         await setDoc(userRef, {
             address: user.address, 
-            phoneNumber: user.phoneNumber 
+            phoneNumber: user.phoneNumber,
+            shoppingCart: user.shoppingCart
         }, { merge: true });  
     } catch (error) {
         console.error("Error updating document: ", error);
