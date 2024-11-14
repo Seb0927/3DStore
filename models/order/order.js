@@ -1,5 +1,6 @@
 import { firestore } from '../../firebase/firebase';
 import { doc, setDoc, getDoc, addDoc, collection, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
+import {sendEmail} from './orderEmail.js';
 
 export const createOrder = async (order) => {
   try {
@@ -9,6 +10,7 @@ export const createOrder = async (order) => {
       total: order.total,
     }
     const docRef = await addDoc(collection(firestore, "orders"), doc);
+    sendEmail('josemanuelpalmaoquendo75@gmail.com');
     return docRef
   } catch (error) {
     console.error("Error adding document: ", error);
