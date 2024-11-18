@@ -8,14 +8,13 @@ interface ProductPageProps {
   }
 }
 
-export default async function Page({params: { id }}: ProductPageProps) {
-  const product = await getProduct(id)
+export default async function Page({ params }: { params: { id: string } }) {
+  const product = await getProduct(params.id)
   console.log(product)
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <ProductPage product={{...product, id: id}} />
+      <ProductPage product={{ ...product, id: params.id }} />
     </div>
   )
 }
