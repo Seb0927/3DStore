@@ -2,12 +2,6 @@ import Header from '@/components/Header'
 import ProductPage from '@/components/ProductPage'
 import { getProduct } from '@/models/product/product'
 
-interface ProductPageProps {
-  params: {
-    id: string
-  }
-}
-
 export default async function Page({ params }: { params: { id: string } }) {
   const product = await getProduct(params.id)
   console.log(product)
