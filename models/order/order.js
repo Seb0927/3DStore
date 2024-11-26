@@ -34,18 +34,43 @@ export const createOrder = async (order,email) => {
   }
 }
 
-export const getOrders = async() => {
+export const getOrders = async () => {
   try {
     const orders = [];
     const querySnapshot = await getDocs(collection(firestore, "orders"));
-    querySnapshot.forEach((doc) => {
-      orders.push({ id: doc.id, ...doc.data() });
-    });
+    for (const document of querySnapshot.docs) {
+      const orderData = document.data();
+      console.log(orderData)
+      const userRef = doc(firestore, `users/${orderData.userId}`);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        const products = [];
+        for (const item of orderData.orderItems) {
+          const product = await getProduct(item.productId);
+          if (product) {
+            products.push({
+              name: product.name,
+              price: product.price,
+              quantity: item.quantity
+            });
+          }
+        }
+        orders.push({
+          id: document.id,
+          products: products,
+          totalPrice: orderData.total,
+          customerName: userData.displayName,
+          phoneNumber: userData.phoneNumber,
+          address: userData.address
+        });
+      }
+    }
     return orders;
   } catch (error) {
     console.error("Error getting documents: ", error);
   }
-}
+};
 
 export const getOrder = async (id) => {
   try {
