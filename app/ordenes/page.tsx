@@ -1,11 +1,12 @@
 import Header from '@/components/Header'
+import OrderList from '@/components/OrderList'
 
 function page() {
   return (
     <div className='min-h-screen bg-gray-50'>
       <Header />
       <main>
-        <h1>Boilerplate para el CRUD de las ordenes</h1>
+        <OrderList />
       </main>
     </div>
   )
