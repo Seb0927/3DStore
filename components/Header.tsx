@@ -95,7 +95,7 @@ export default function Header() {
         <Link href="/productos" className="text-gray-600 hover:text-gray-900">Productos</Link>
         <Link href="/contacto" className="text-gray-600 hover:text-gray-900">Contacto</Link>
         {user?.isAdmin ?
-          <Link href="/administrar" className="text-gray-600 hover:text-gray-900">Administrar</Link>
+          <Link href="/administrar" className="text-gray-600 hover:text-gray-900">Añadir</Link>
           :
           null
         }
