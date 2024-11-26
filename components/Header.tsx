@@ -99,6 +99,11 @@ export default function Header() {
           :
           null
         }
+        {user?.isAdmin ?
+          <Link href="/ordenes" className="text-gray-600 hover:text-gray-900">Ordenes</Link>
+          :
+          null
+        }
         <button className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
           onClick={() => (isLoading ? null : handleSignIn())}
           disabled={isLoading}>
