@@ -8,7 +8,8 @@ export const createProduct = async (product) => {
             name: product.name,
             price: product.price,
             description: product.description,
-            image: product.image
+            image: product.image,
+            model: product.model,
         }
         const docRef = await addDoc(collection(firestore, "products"), doc);
         return docRef
@@ -28,12 +29,32 @@ export const uploadImage = async (file) => {
     }
 }
 
+export const uploadModel = async (file) => {
+    try {
+        const storageRef = ref(storage, `models/${file.name}`)
+        await uploadBytes(storageRef, file)
+        const downloadURL = await getDownloadURL(storageRef)
+        return downloadURL
+    } catch (error) {
+        console.error("Error uploading model: ", error);
+    }
+}
+
 export const deleteImage = async (url) => {
     try {
         const storageRef = ref(storage, url)
         await storageRef.delete()
     } catch (error) {
         console.error("Error deleting image: ", error);
+    }
+}
+
+export const deleteModel = async (url) => {
+    try {
+        const storageRef = ref(storage, url)
+        await storageRef.delete()
+    } catch (error) {
+        console.error("Error deleting model: ", error);
     }
 }
 

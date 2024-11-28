@@ -72,17 +72,17 @@ export default function ProductPage({ product }: ProductPageProps) {
             </Button>
           </div>
           <div className="border rounded-lg p-4 bg-muted">
-            <Canvas style={{ height: 500 }}>
+            {product?.model ? <Canvas style={{ height: 500 }}>
               <Suspense fallback={<Loader />}>
                 <ambientLight />
                 <pointLight position={[10, 10, 10]} />
-                <ModelViewer url={"https://firebasestorage.googleapis.com/v0/b/d-store-51dfe.appspot.com/o/models%2Fsoccer_ball.glb?alt=media&token=77bef4c7-6ba3-41f2-8c94-b0da0b8c90c0"} />
+                <ModelViewer url={product.model} />
                 <OrbitControls />
               </Suspense>
             </Canvas>
-            {/* <div className="flex items-center justify-center h-64">
-              <span className="ml-2 text-muted-foreground">3D Model Placeholder</span>
-            </div> */}
+            : <div className="flex items-center justify-center h-64">
+              <span className="ml-2 text-muted-foreground">3D Model Not Available</span>
+            </div>}
           </div>
         </div>
       </div>
