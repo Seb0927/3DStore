@@ -6,6 +6,11 @@ import { useUser } from '@/context/UserContext'
 import { DocumentData } from 'firebase/firestore';
 import { updateUser } from '@/models/user/users';
 import { ShoppingCart } from 'lucide-react'
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
+import ModelViewer from '@/components/ModelViewer';
+import { Suspense } from 'react';
+import { Loader } from '@/components/Loader';
 
 interface ProductPageProps {
   product: DocumentData | undefined;
@@ -67,9 +72,17 @@ export default function ProductPage({ product }: ProductPageProps) {
             </Button>
           </div>
           <div className="border rounded-lg p-4 bg-muted">
-            <div className="flex items-center justify-center h-64">
-              <span className="ml-2 text-muted-foreground">3D Model Placeholder</span>
-            </div>
+            {product?.model ? <Canvas style={{ height: 500 }}>
+              <Suspense fallback={<Loader />}>
+                <ambientLight />
+                <pointLight position={[10, 10, 10]} />
+                <ModelViewer url={product.model} />
+                <OrbitControls />
+              </Suspense>
+            </Canvas>
+            : <div className="flex items-center justify-center h-64">
+              <span className="ml-2 text-muted-foreground">3D Model Not Available</span>
+            </div>}
           </div>
         </div>
       </div>

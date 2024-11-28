@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { uploadImage, createProduct, getProducts, getProduct, updateProduct, deleteImage, deleteProduct } from "../models/product/product"
+import { uploadModel, uploadImage, createProduct, getProducts, getProduct, updateProduct, deleteImage, deleteModel, deleteProduct } from "../models/product/product"
 
 interface Product {
   id: string
@@ -15,12 +15,13 @@ interface Product {
   description: string
   image: string
   price: string
+  model: string
 }
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([])
-  const [currentProduct, setCurrentProduct] = useState<{ id: string, name: string, description: string, price: string, image: File | null }>({ id: '', name: '', description: '', price: '', image: null })
-  const [newProduct, setNewProduct] = useState<{ name: string, description: string, price: string, image: File | null }>({ name: '', description: '', price: '', image: null })
+  const [currentProduct, setCurrentProduct] = useState<{ id: string, name: string, description: string, price: string, image: File | null, model: File | null }>({ id: '', name: '', description: '', price: '', image: null, model:null })
+  const [newProduct, setNewProduct] = useState<{ name: string, description: string, price: string, image: File | null, model: File | null }>({ name: '', description: '', price: '', image: null, model:null })
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
@@ -30,34 +31,53 @@ export default function ProductList() {
     return uploadImage(file)
   }
 
-  const handleSave = async () => {
-    if (newProduct.image) {
-      const imageUrl = await handleImageUpload(newProduct.image)
-      const productData = { ...newProduct, image: imageUrl }
-      const docRef = await createProduct(productData);
-      if (docRef) {
-        setProducts([...products, { ...productData, id: docRef.id, image: productData.image || '' }])
-      } setIsAddDialogOpen(false)
-    }
+  const handleModelUpload = async (file: File) => {
+    return uploadModel(file)
   }
 
+  const handleSave = async () => {
+    let imageUrl = '';
+    let modelUrl = '';
+    if (newProduct.image) {
+      imageUrl = (await handleImageUpload(newProduct.image)) || ''
+    }
+    if (newProduct.model) {
+      modelUrl = await handleModelUpload(newProduct.model) || ''
+    }    
+      const productData = { ...newProduct, image: imageUrl, model: modelUrl }
+      const docRef = await createProduct(productData);
+      if (docRef) {
+        setProducts([...products, { ...productData, id: docRef.id, image: productData.image || '', model: productData.model || '' }])
+      } setIsAddDialogOpen(false)
+    }
+
+  useEffect(() => {
+    console.log(currentProduct)
+    console.log(newProduct)
+  }, [currentProduct, newProduct])
+  
+
   const handleUpdate = async () => {
-    let data;
+    let imageUrl = '';
+    let modelUrl = '';
+    
     if (currentProduct.image) {
       await deleteImage(currentProduct.image)
-      const imageUrl = await handleImageUpload(currentProduct.image)
-      data = {
+      imageUrl = await handleImageUpload(currentProduct.image) || ''
+    }
+
+    if (currentProduct.model) {
+      await deleteModel(currentProduct.model)
+      modelUrl = await handleModelUpload(currentProduct.model) || ''
+    }
+    
+    
+    const data = {
         name: currentProduct.name,
         description: currentProduct.description,
         price: currentProduct.price,
-        image: imageUrl
-      }
-    } else {
-      data = {
-        name: currentProduct.name,
-        description: currentProduct.description,
-        price: currentProduct.price,
-      }
+        image: imageUrl,
+        model: modelUrl, 
     }
 
     await updateProduct(currentProduct.id, data)
@@ -70,20 +90,22 @@ export default function ProductList() {
   const handleEdit = (product: Product) => {
     setCurrentProduct({
       ...product,
-      image: null // Set image to null or handle conversion if needed
+      image: null, // Set image to null or handle conversion if needed
+      model: null // Set model to null or handle conversion if needed
     })
     setIsEditDialogOpen(true)
   }
 
   const handleAdd = () => {
-    setCurrentProduct({ id: '1', name: '', description: '', image: null, price: '' })
+    setCurrentProduct({ id: '1', name: '', description: '', image: null, price: '', model: null })
     setIsAddDialogOpen(true)
   }
 
   const handleDelete = async (product: Product) => {
     setCurrentProduct({
       ...product,
-      image: null // Set image to null or handle conversion if needed
+      image: null, // Set image to null or handle conversion if needed
+      model: null // Set model to null or handle conversion if needed
     })
     setIsDeleteDialogOpen(true)
 
@@ -181,6 +203,14 @@ export default function ProductList() {
               }} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="model" className="text-right">Modelo 3D</Label>
+              <Input type="file" onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setCurrentProduct({ ...currentProduct, model: e.target.files[0] });
+                }
+              }} />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="price" className="text-right">Precio</Label>
               <Input id="edit_price" className="col-span-3" value={currentProduct?.price} onChange={(e) => setCurrentProduct({ ...currentProduct!, price: e.target.value })} />
             </div>
@@ -210,6 +240,14 @@ export default function ProductList() {
               <Input type="file" onChange={(e) => {
                 if (e.target.files && e.target.files.length > 0) {
                   setNewProduct({ ...newProduct, image: e.target.files[0] });
+                }
+              }} />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="modelo" className="text-right">Modelo 3D</Label>
+              <Input type="file" onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setNewProduct({ ...newProduct, model: e.target.files[0] });
                 }
               }} />
             </div>

@@ -76,8 +76,8 @@ export default function Order() {
       }
 
       await createOrder(order, user.email)
-      //await updateUser({ ...user, shoppingCart: {} })
-      //setItems([])
+      await updateUser({ ...user, shoppingCart: {} })
+      setItems([])
     } 
   }
 
