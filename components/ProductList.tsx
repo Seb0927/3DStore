@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { uploadModel, uploadImage, createProduct, getProducts, getProduct, updateProduct, deleteImage, deleteModel, deleteProduct } from "../models/product/product"
-import { mod } from 'three/webgpu'
 
 interface Product {
   id: string
@@ -37,8 +36,8 @@ export default function ProductList() {
   }
 
   const handleSave = async () => {
-    var imageUrl = '';
-    var modelUrl = '';
+    let imageUrl = '';
+    let modelUrl = '';
     if (newProduct.image) {
       imageUrl = (await handleImageUpload(newProduct.image)) || ''
     }
@@ -59,9 +58,8 @@ export default function ProductList() {
   
 
   const handleUpdate = async () => {
-    let data;
-    var imageUrl = '';
-    var modelUrl = '';
+    let imageUrl = '';
+    let modelUrl = '';
     
     if (currentProduct.image) {
       await deleteImage(currentProduct.image)
@@ -74,7 +72,7 @@ export default function ProductList() {
     }
     
     
-    data = {
+    const data = {
         name: currentProduct.name,
         description: currentProduct.description,
         price: currentProduct.price,

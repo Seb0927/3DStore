@@ -10,7 +10,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import ModelViewer from '@/components/ModelViewer';
 import { Suspense } from 'react';
-import { Loader } from '@/components/loader';
+import { Loader } from '@/components/Loader';
 
 interface ProductPageProps {
   product: DocumentData | undefined;
